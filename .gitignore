@@ -14,7 +14,10 @@ wheels/
 data/
 
 # IDE
-.vscode
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extension.json
 .idea
 
 # Ruff

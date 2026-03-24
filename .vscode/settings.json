@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        ".python-version": true,
+        "LICENSE": true,
+        "uv.lock": true,
+        ".ruff_cache": true,
+        ".venv": true
+    }
+}
