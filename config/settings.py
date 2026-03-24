@@ -1,11 +1,12 @@
 import os
 import sys
 from dataclasses import dataclass
-from typing import Final, ClassVar
 from pathlib import Path
+from typing import ClassVar, Final
 
 import torch
 from dotenv import load_dotenv
+
 
 _root: Final = Path(__file__).parent.parent
 if str(_root) not in sys.path:

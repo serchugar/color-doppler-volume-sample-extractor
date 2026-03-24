@@ -24,3 +24,40 @@ opencv-contrib-python = [
 name = "pytorch-cu130"
 url = "https://download.pytorch.org/whl/cu130"
 explicit = true
+
+[dependency-groups]
+dev = ["ruff>=0.15.7"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
+select = [
+    "E",   # pycodestyle errors (PEP 8 violations)
+    "W",   # pycodestyle warnings (style issues)
+    "F",   # Pyflakes (logic errors and unused variables)
+    "I",   # isort (import sorting and grouping)
+    "N",   # pep8-naming (naming convention compliance)
+    "UP",  # pyupgrade (modernize Python syntax)
+    "B",   # flake8-bugbear (common design flaws/bugs)
+    "C4",  # flake8-comprehensions (optimized list/dict/set usage)
+    "A",   # flake8-builtins (prevent shadowing Python built-ins)
+    "ANN", # flake8-annotations (type hint enforcement)
+    "PTH", # flake8-use-pathlib (prefer Pathlib over os.path)
+    "ARG", # flake8-unused-arguments (detect unused function inputs)
+    "SIM", # flake8-simplify (suggest code simplifications)
+]
+ignore = [
+    "ANN401", # Allow 'Any' for complex types (useful in deep learning)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
