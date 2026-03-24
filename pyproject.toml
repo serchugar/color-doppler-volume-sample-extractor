@@ -1,0 +1,26 @@
+[project]
+name = "color-doppler-volume-sample-extractor"
+version = "0.1.0"
+description = "Volume Sample extractor for Color Doppler ultrasound data using an U-Net neural network architecture."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = ["python-dotenv>=1.2.2"]
+
+[project.optional-dependencies]
+cpu = ["torch>=2.11.0", "torchvision>=0.26.0", "opencv-contrib-python"]
+cuda = ["torch>=2.11.0", "torchvision>=0.26.0", "opencv-contrib-python"]
+
+[tool.uv]
+conflicts = [[{ extra = "cpu" }, { extra = "cuda" }]]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", extra = "cuda" }]
+torchvision = [{ index = "pytorch-cu130", extra = "cuda" }]
+opencv-contrib-python = [
+    { url = "https://github.com/cudawarped/opencv-python-cuda-wheels/releases/download/4.13.0.90/opencv_contrib_python-4.13.0.90-cp37-abi3-win_amd64.whl", extra = "cuda" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
