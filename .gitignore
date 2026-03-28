@@ -12,6 +12,7 @@ wheels/
 
 # Project specific
 data/
+weights/
 
 # IDE
 .vscode/*
