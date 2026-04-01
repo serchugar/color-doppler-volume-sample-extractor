@@ -75,6 +75,69 @@ If `checkpoint_dir` in `main.py` is enabled (it is by default), it will save the
 > **Note:** Due to the lack of data, and the time cost of creating each mask, the training does not run a validation
 process.
 
+### 4. Inference
+
+To run predictions, it is necessary to load the model weights.  
+After training the model, a `weights.pt` file will be generated inside /weights.
+
+If you want to skip training and use a pre-trained model, you can download the weights from the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest).
+
+> **IMPORTANT: Data Pre-processing Warning**  
+> The current pretrained weights were trained on images after applying a 95% threshold.  
+> To get accurate predictions, input images must be processed using the DopplerDataset class, which handles this transformation.  
+> Loading "raw" images directly into the model without this thresholding will result in incorrect segmentations.
+
+```python
+from pathlib import Path
+
+import torch
+import torchvision.transforms as T
+
+from config import Consts, Secrets
+from src.model import DynamicUNet
+from src.dataset import DopplerDataset, discover_images
+
+# Initialize model with the correct hyperparameters
+model = DynamicUNet(depth=4, init_features=32, in_channels=1, out_channels=1)
+model.to(Consts.DEVICE)
+
+# Load the weights
+weights_path = "weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt"
+state_dict = torch.load(weights_path, map_location=Consts.DEVICE, weights_only=True)
+model.load_state_dict(state_dict)
+model.eval()
+
+# Load the images with the dataset
+images_path: list[Path] = discover_images(Secrets.UNLABELED_DATA_DIR)
+dataset: DopplerDataset = DopplerDataset(images_path)
+
+# Sample one image and add batch dimension
+image: torch.Tensor = dataset[0]  # type:ignore
+image = image.unsqueeze(0).to(Consts.DEVICE)
+
+# Inference
+with torch.no_grad():
+  output_mask: torch.Tensor = (torch.sigmoid(model(image)) > 0.5).float()
+
+# Show result on screen
+mask_img = T.ToPILImage()(output_mask.squeeze().cpu())
+mask_img.show()
+```
+
+### Pretrained Model Configuration
+The following hyperparameters were used to generate the weights available in the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest). You can use these as a reference for your own training:
+
+| Parameter | Value | Description |
+| :--- | :--- | :--- |
+| **Architecture** | U-Net | Base model structure |
+| **Depth** | 4 | Number of downsampling/upsampling blocks |
+| **Init Features** | 32 | Number of filters in the first layer |
+| **Input Size** | 512 x 512 | Spatial resolution of the samples |
+| **Threshold** | 0.95 | Doppler intensity cutoff during preprocessing |
+| **Learning Rate** | 0.001 | Optimizer step size (Adam) |
+| **Epochs** | 2000 | Total training iterations |
+| **Batch Size** | 5 | Number of samples per training step |
+
 ## GPU Acceleration
 To enable CUDA support for faster training and inference, ensure you have CUDA and CUDNN installed.  
 
