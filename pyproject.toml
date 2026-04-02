@@ -1,10 +1,17 @@
 [project]
 name = "color-doppler-volume-sample-extractor"
-version = "0.1.0"
+version = "0.2.0"
 description = "Volume Sample extractor for Color Doppler ultrasound data using an U-Net neural network architecture."
 readme = "README.md"
+authors = [
+    { name = "serchugar", email = "162186871+serchugar@users.noreply.github.com" },
+]
 requires-python = ">=3.14"
 dependencies = ["python-dotenv>=1.2.2"]
+
+[project.urls]
+Homepage = "https://github.com/serchugar/color-doppler-volume-sample-extractor"
+Issues = "https://github.com/serchugar/color-doppler-volume-sample-extractor/issues"
 
 [project.optional-dependencies]
 cpu = ["torch>=2.11.0", "torchvision>=0.26.0", "opencv-contrib-python"]
@@ -61,3 +68,10 @@ lines-after-imports = 2
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dv_extractor"]

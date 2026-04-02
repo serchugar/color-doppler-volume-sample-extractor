@@ -7,15 +7,18 @@ import torch.optim as optim
 import torchvision.transforms.v2 as v2
 from torch.utils.data import DataLoader
 
-from config import Secrets
-from src.dataset import DopplerDataset, discover_images_with_mask
-from src.model import DynamicUNet
-from src.utils import format_time, seed_worker
+from dv_extractor.dataset import DopplerDataset, discover_images_with_mask
+from dv_extractor.model import DynamicUNet
+from dv_extractor.utils import format_time, seed_worker
 
 
-# TODO: Add start_over:bool = True
 def train(
-    model: DynamicUNet, epochs: int, lr: float = 0.001, batch_size: int = 5, checkpoints_dir: Path | None = None
+    model: DynamicUNet,
+    labeled_data_dir: Path,
+    epochs: int,
+    lr: float = 0.001,
+    batch_size: int = 5,
+    checkpoints_dir: Path | None = None,
 ) -> None:
     if checkpoints_dir:
         checkpoints_dir.mkdir(parents=True, exist_ok=True)
@@ -32,7 +35,7 @@ def train(
         ]
     )
 
-    images, masks = discover_images_with_mask(Secrets.LABELED_DATA_DIR)
+    images, masks = discover_images_with_mask(labeled_data_dir)
     dataset = DopplerDataset(images, masks, transform=transform)
 
     seed = torch.initial_seed()

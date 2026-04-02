@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-02
+
+### Added
+- `constants.py` module exporting `DEVICE` for device management
+
+### Changed
+- Restructured project from App to Python Package with `src/` layout
+- Package now installable and importable as `dv_extractor`
+- Updated documentation for package usage patterns
+
+### Removed
+- `main.py` entry point
+- `config/` module (environment management now user-responsibility)
+
 ## [0.1.0] - 2026-03-28
 
 ### Added
@@ -25,5 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Dataset` loading utilities for labeled and unlabeled data
 - Utility functions for `reproducibility` and device setup
 
-[Unreleased]: https://github.com/serchugar/color-doppler-volume-sample-extractor/compare/v0.1.0...main
+[Unreleased]: https://github.com/serchugar/color-doppler-volume-sample-extractor/compare/v0.2.0...main
+[0.2.0]: https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/tag/v0.2.0
 [0.1.0]: https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/tag/v0.1.0

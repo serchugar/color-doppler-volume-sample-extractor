@@ -9,34 +9,32 @@ This repository implements a U-Net based pipeline to segment and generate masks 
 </div>
 
 ## Quick Start
-
-This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+For [uv](https://docs.astral.sh/uv/) users (recommended):
 
 ```bash
-# Clone and enter the repo
 git clone https://github.com/serchugar/color-doppler-volume-sample-extractor
-cd color-doppler-volume-sample-extractor
 
-# Sync environment and dependencies. Choose one of the two
-uv sync --extra cuda # if nvidia gpu
-uv sync --extra cpu # else
+# In your uv project, install in editable mode with CUDA support (Nvidia GPU)
+uv pip install -e "/path/to/color-doppler-volume-sample-extractor[cuda]"
 
-# Prepare your data (see training workflow below)
+# Or install in editable mode with CPU support
+uv pip install -e "/path/to/color-doppler-volume-sample-extractor[cpu]"
+```
 
-# Copy and set the .env file
-copy .env.example .env # if windows
-cp .env.example .env # if linux
+Alternatively, if using standard Python and pip:
 
-# Run the main script. Modify training params here
-uv run main.py
+```bash
+git clone https://github.com/serchugar/color-doppler-volume-sample-extractor
 
-# Weights of the trained model will be stored in:
-/weights
+# Install with CUDA support
+pip install -e "/path/to/color-doppler-volume-sample-extractor[cuda]"
+
+# Or install with CPU support
+pip install -e "/path/to/color-doppler-volume-sample-extractor[cpu]"
 ```
 
 ## Training Workflow
-
-To train the U-Net model, follow these steps:
+If you want to skip training and use a pre-trained model, you can download the weights from the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest).
 
 ### 1. Prepare Your Data
 Organize your training images and masks in a directory with the following naming convention:
@@ -47,40 +45,41 @@ Organize your training images and masks in a directory with the following naming
 
 > Mask images must be **binary images without antialiasing** and saved as PNG files to preserve lossless compression.
 
-### 2. Configure Environment Variables
-Create a `.env` file in the root directory of the project and add the path to your labeled data:
+### 2. Run Training
+```python
+import random
+from pathlib import Path
 
+from dv_extractor import DEVICE, DynamicUNet, train
+from dv_extractor.utils import seed_all
+
+# Not mandatory, but recommended for reproducibility
+seed = random.getrandbits(32)
+seed_all(seed)
+print(f"Seed: {seed}")
+
+model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
+model.to(DEVICE)
+print(f"Model device: {model.device}\n")
+
+labeled_data_dir = Path("path/to/your/labeled/data/dir")
+train(
+    model,
+    labeled_data_dir,
+    epochs=100,
+    lr=0.001,
+    batch_size=5,
+    checkpoints_dir=Path("weights"),
+)
 ```
-LABELED_DATA_DIR="/path/to/your/data/directory"
-```
 
-Replace `/path/to/your/data/directory` with the absolute or relative path to the folder containing your `img<number>.jpg` and `mask<number>.png` files.
-
-Example:
-```
-LABELED_DATA_DIR="./data/labeled"
-```
-
-### 3. Run Training
-Execute the main script:
-
-```bash
-uv run main.py
-```
-Any changes to the training hyperparameters can be done in the `train()` function call within `main.py`.
-
-The model will load the images and masks from the directory specified in `LABELED_DATA_DIR` and begin training.
-If `checkpoint_dir` in `main.py` is enabled (it is by default), it will save the best model to a `/weights` folder.
+The trained model weights will be saved in the `checkpoints_dir` folder.
 
 > **Note:** Due to the lack of data, and the time cost of creating each mask, the training does not run a validation
 process.
 
-### 4. Inference
-
+## Inference
 To run predictions, it is necessary to load the model weights.  
-After training the model, a `weights.pt` file will be generated inside /weights.
-
-If you want to skip training and use a pre-trained model, you can download the weights from the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest).
 
 > **IMPORTANT: Data Pre-processing Warning**  
 > The current pretrained weights were trained on images after applying a 95% threshold.  
@@ -91,36 +90,34 @@ If you want to skip training and use a pre-trained model, you can download the w
 from pathlib import Path
 
 import torch
-import torchvision.transforms as T
-
-from config import Consts, Secrets
-from src.model import DynamicUNet
-from src.dataset import DopplerDataset, discover_images
+import torchvision.transforms as t
+from dv_extractor import DEVICE, DopplerDataset, DynamicUNet, discover_images
 
 # Initialize model with the correct hyperparameters
-model = DynamicUNet(depth=4, init_features=32, in_channels=1, out_channels=1)
-model.to(Consts.DEVICE)
+model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
+model.to(DEVICE)
 
-# Load the weights
-weights_path = "weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt"
-state_dict = torch.load(weights_path, map_location=Consts.DEVICE, weights_only=True)
+# Load the weights. Here we use the pretrained ones
+weights_path = Path("weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt")
+state_dict = torch.load(weights_path, map_location=DEVICE, weights_only=True)
 model.load_state_dict(state_dict)
 model.eval()
 
 # Load the images with the dataset
-images_path: list[Path] = discover_images(Secrets.UNLABELED_DATA_DIR)
+unlabeled_dir = Path("path/to/your/images")
+images_path: list[Path] = discover_images(unlabeled_dir)
 dataset: DopplerDataset = DopplerDataset(images_path)
 
 # Sample one image and add batch dimension
 image: torch.Tensor = dataset[0]  # type:ignore
-image = image.unsqueeze(0).to(Consts.DEVICE)
+image = image.unsqueeze(0).to(DEVICE)
 
 # Inference
 with torch.no_grad():
-  output_mask: torch.Tensor = (torch.sigmoid(model(image)) > 0.5).float()
+    output_mask: torch.Tensor = (torch.sigmoid(model(image)) > 0.5).float()
 
 # Show result on screen
-mask_img = T.ToPILImage()(output_mask.squeeze().cpu())
+mask_img = t.ToPILImage()(output_mask.squeeze().cpu())
 mask_img.show()
 ```
 
@@ -153,7 +150,6 @@ uv sync --extra cuda
 ```
 
 ### Troubleshooting: ImportError with cv2
-
 If you encounter an error such as:
 ```
 File "your_dir\color-doppler-volume-sample-extractor\.venv\Lib\site-packages\cv2\__init__.py", line 181, in <module>

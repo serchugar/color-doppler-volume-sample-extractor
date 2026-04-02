@@ -8,8 +8,8 @@ conflicts = [[
 
 [[package]]
 name = "color-doppler-volume-sample-extractor"
-version = "0.1.0"
-source = { virtual = "." }
+version = "0.2.0"
+source = { editable = "." }
 dependencies = [
     { name = "python-dotenv" },
 ]
