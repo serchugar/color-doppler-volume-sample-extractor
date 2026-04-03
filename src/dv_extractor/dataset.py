@@ -1,5 +1,7 @@
+import re
 from collections.abc import Sequence
 from pathlib import Path
+from re import Pattern
 
 import cv2 as cv
 import torch
@@ -10,13 +12,40 @@ from torchvision import tv_tensors
 from torchvision.transforms.v2 import Transform
 
 
-def discover_images(data_dir: Path) -> list[Path]:
-    return sorted(data_dir.rglob("img*.jpg"))
+def discover_images(
+    data_dir: Path, filename_re: Pattern = re.compile(r"img\d+", re.IGNORECASE), extension: str | set[str] = ".jpg"
+) -> list[Path]:
+
+    extension = {extension} if isinstance(extension, str) else extension
+    return [
+        file
+        for file in sorted(data_dir.rglob("*"))
+        if file.is_file() and filename_re.match(file.stem) and file.suffix.lower() in extension
+    ]
 
 
-def discover_images_with_mask(data_dir: Path) -> tuple[list[Path], list[Path]]:
-    images = sorted(data_dir.rglob("img*.jpg"))
-    masks = sorted(data_dir.rglob("mask*.png"))
+def discover_images_with_mask(
+    data_dir: Path,
+    img_re: Pattern = re.compile(r"img\d+", re.IGNORECASE),
+    mask_re: Pattern = re.compile(r"mask\d+", re.IGNORECASE),
+    img_extension: str | set[str] = ".jpg",
+    mask_extension: str | set[str] = ".png",
+) -> tuple[list[Path], list[Path]]:
+
+    img_extension = {img_extension} if isinstance(img_extension, str) else img_extension
+    mask_extension = {mask_extension} if isinstance(mask_extension, str) else mask_extension
+
+    images = []
+    masks = []
+    for file in sorted(data_dir.rglob("*")):
+        if not file.is_file():
+            continue
+
+        if img_re.match(file.stem) and file.suffix.lower() in img_extension:
+            images.append(file)
+        elif mask_re.match(file.stem) and file.suffix.lower() in mask_extension:
+            masks.append(file)
+
     max_len = min(len(images), len(masks))
     return images[:max_len], masks[:max_len]
 

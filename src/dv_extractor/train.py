@@ -76,7 +76,7 @@ def train(
             min_loss = epoch_loss
             print(
                 f"Epoch [{epoch + 1}/{epochs}] - Loss: {epoch_loss:.4f}"
-                f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)}"
+                f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)} | NEW BEST"
             )
 
             if checkpoints_dir:
@@ -93,6 +93,11 @@ def train(
 
                 filepath = checkpoint_folder / "weights.pt"
                 torch.save(model.state_dict(), filepath)
+        else:
+            print(
+                f"Epoch [{epoch + 1}/{epochs}] - Loss: {epoch_loss:.4f}"
+                f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)}"
+            )
 
 
 def dice_coefficient(
