@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `predict` method in `DynamicUNet` class. Internally applies threshold. Recommended method for inference.
+- `tqdm` dependency for progress bars. Used in `predict` method
+- `visualize` function in `utils.py` for visualizing single tensor images
+
 ## [0.2.0] - 2026-04-02
 
 ### Added

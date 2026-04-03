@@ -2,11 +2,14 @@
 
 This repository implements a U-Net based pipeline to segment and generate masks from volumetric Color Doppler imaging data:
 
-<div style="display:flex; align-items:center; margin: 0 auto; width: fit-content;">
+<div align="center">
   <img src="assets/img7.jpg" alt="Input Color Doppler Image" width="250">
-  <span style="font-size: 24px; margin: 0 20px;">→</span>
+  <span>→</span>
   <img src="assets/mask7.png" alt="Binary Mask Output Segmentation Mask" width="250">
 </div>
+
+> [!NOTE]
+> To see the latest updates and upcoming features, please check the [Change Log](./CHANGELOG.md).
 
 ## Quick Start
 For [uv](https://docs.astral.sh/uv/) users (recommended):
@@ -41,8 +44,9 @@ Organize your training images and masks in a directory with the following naming
 - Images: `img<number>.jpg` (e.g., `img1.jpg`, `img2.jpg`, `img123.jpg`)
 - Masks: `mask<number>.png` (e.g., `mask1.png`, `mask2.png`, `mask123.png`)
 
-**Important:** The number in the filename must match between corresponding image and mask files (e.g., `img42.jpg` should have a corresponding `mask42.png`). This naming convention is required for the pipeline to correctly associate images with their segmentation masks.
-
+> [!IMPORTANT]
+> The number in the filename must match between corresponding image and mask files (e.g., `img42.jpg` should have a corresponding `mask42.png`). This naming convention is required for the pipeline to correctly associate images with their segmentation masks.
+>
 > Mask images must be **binary images without antialiasing** and saved as PNG files to preserve lossless compression.
 
 ### 2. Run Training
@@ -75,23 +79,24 @@ train(
 
 The trained model weights will be saved in the `checkpoints_dir` folder.
 
-> **Note:** Due to the lack of data, and the time cost of creating each mask, the training does not run a validation
-process.
+> [!NOTE]
+> Due to the lack of data, and the time cost of creating each mask, the training does not run a validation process.
 
 ## Inference
-To run predictions, it is necessary to load the model weights.  
+To run predictions, first train your model or load pretrained weights, then use the `predict()` method from the `DynamicUNet` class.
 
-> **IMPORTANT: Data Pre-processing Warning**  
+> [!WARNING]
 > The current pretrained weights were trained on images after applying a 95% threshold.  
-> To get accurate predictions, input images must be processed using the DopplerDataset class, which handles this transformation.  
-> Loading "raw" images directly into the model without this thresholding will result in incorrect segmentations.
+> Loading "raw" images directly into the model without this thresholding will result in incorrect segmentations.  
+> The `predict()` method handles this automatically, use it to avoid any issues. 
 
 ```python
 from pathlib import Path
 
 import torch
-import torchvision.transforms as t
-from dv_extractor import DEVICE, DopplerDataset, DynamicUNet, discover_images
+from dv_extractor import DEVICE, DynamicUNet, discover_images
+from dv_extractor.utils import visualize
+from torchvision.io import decode_image
 
 # Initialize model with the correct hyperparameters
 model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
@@ -101,24 +106,18 @@ model.to(DEVICE)
 weights_path = Path("weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt")
 state_dict = torch.load(weights_path, map_location=DEVICE, weights_only=True)
 model.load_state_dict(state_dict)
-model.eval()
 
-# Load the images with the dataset
-unlabeled_dir = Path("path/to/your/images")
-images_path: list[Path] = discover_images(unlabeled_dir)
-dataset: DopplerDataset = DopplerDataset(images_path)
+# Load the images 
+imgs_path: list[Path] = discover_images(Path("path/to/your/images"))
 
-# Sample one image and add batch dimension
-image: torch.Tensor = dataset[0]  # type:ignore
-image = image.unsqueeze(0).to(DEVICE)
+# Run the inference
+masks: list[torch.Tensor] = model.predict(imgs_path)
 
-# Inference
-with torch.no_grad():
-    output_mask: torch.Tensor = (torch.sigmoid(model(image)) > 0.5).float()
-
-# Show result on screen
-mask_img = t.ToPILImage()(output_mask.squeeze().cpu())
-mask_img.show()
+# Sample image and mask and show on screen
+img: torch.Tensor = decode_image(imgs_path[0])
+mask: torch.Tensor = masks[0]
+visualize(img)
+visualize(mask)
 ```
 
 ### Pretrained Model Configuration

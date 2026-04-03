@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 import torch
+import torchvision.transforms as t
 
 
 # https://docs.pytorch.org/docs/stable/notes/randomness.html
@@ -31,3 +32,7 @@ def format_time(secs: float) -> str:
         return f"{int(mins)}m {secs:.2f}s"
     else:
         return f"{secs:.4f}s"
+
+
+def visualize(img: torch.Tensor) -> None:
+    t.ToPILImage()(img.cpu()).show()

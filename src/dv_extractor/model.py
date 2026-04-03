@@ -1,5 +1,11 @@
+from pathlib import Path
+from typing import overload
+
 import torch
 import torch.nn as nn
+import torchvision.transforms.v2 as v2
+import torchvision.transforms.v2.functional as f
+from torchvision.io import decode_image
 
 
 class DynamicUNet(nn.Module):
@@ -9,7 +15,7 @@ class DynamicUNet(nn.Module):
 
     def __init__(
         self,
-        in_channels: int = 3,
+        in_channels: int = 1,
         out_channels: int = 1,
         depth: int = 3,
         init_features: int = 32,
@@ -78,3 +84,50 @@ class DynamicUNet(nn.Module):
             nn.BatchNorm2d(out_c),
             nn.ReLU(inplace=True),
         )
+
+    @overload
+    def predict(self, img: Path | torch.Tensor) -> torch.Tensor: ...
+
+    @overload
+    def predict(self, img: list[Path] | list[torch.Tensor]) -> list[torch.Tensor]: ...
+
+    def predict(self, img):
+        from tqdm import tqdm
+
+        self.eval()
+        custom_format = " {desc}: {percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} [{elapsed_s:0.1f}s elapsed, {remaining_s:0.0f}s remaining, {rate_fmt}]         "  # noqa: E501
+
+        if isinstance(img, Path):
+            return self._predict_one(decode_image(img))
+
+        elif isinstance(img, torch.Tensor):
+            return self._predict_one(img)
+
+        elif isinstance(img, list):
+            if isinstance(img[0], Path):
+                masks = []
+                for img_path in tqdm(img, bar_format=custom_format, unit=" samples"):
+                    mask = self._predict_one(decode_image(img_path))
+                    masks.append(mask)
+                return masks
+
+            elif isinstance(img[0], torch.Tensor):
+                return [self._predict_one(i) for i in tqdm(img, bar_format=custom_format, unit=" samples")]
+        else:
+            raise ValueError(f"Invalid input type: {type(img)}")
+
+    def _predict_one(self, img: torch.Tensor) -> torch.Tensor:
+        threshold = 0.95
+
+        img = f.to_dtype(img, torch.float32)
+        img = (f.to_grayscale(img) > 255 * threshold).float()
+        img = img.unsqueeze(0)
+        img = img.to(self.device)
+
+        _, _, h, w = img.shape
+        img = v2.Resize((512, 512))(img)  # Resize to 512x512 since model was trained on 512x512 images
+
+        with torch.no_grad():
+            probs = torch.sigmoid(self.forward(img))
+            probs = v2.Resize((h, w), interpolation=v2.InterpolationMode.NEAREST)(probs)
+            return ((probs > 0.5).float()).squeeze()  # Remove batch dimension
