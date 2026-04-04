@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)
 - `train` function now prints every epoch and highlights new best performance with a "NEW BEST" flag
+- `DopplerDataset` `__getitem__` no longer uses OpenCV to load image and apply threshold. Done with pytorch instead.
+
+### Removed
+- `opencv-contrib-python` dependency
 
 ## [0.2.0] - 2026-04-02
 
