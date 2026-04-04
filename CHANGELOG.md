@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `predict` method in `DynamicUNet` class. Internally applies threshold. Recommended method for inference.
 - `tqdm` dependency for progress bars. Used in `predict` method
 - `visualize` function in `utils.py` for visualizing single tensor images
+- Estimated remaining time in `train` function epoch logs
+- `sub_min_precision` parameter in `format_time` utility function for higher resolution on short durations
 
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)

@@ -22,7 +22,7 @@ def seed_worker(worker_id: int) -> None:
     random.seed(worker_seed)
 
 
-def format_time(secs: float) -> str:
+def format_time(secs: float, sub_min_precision: int = 2) -> str:
     hours, rem = divmod(secs, 3600)
     mins, secs = divmod(rem, 60)
 
@@ -31,7 +31,7 @@ def format_time(secs: float) -> str:
     elif mins > 0:
         return f"{int(mins)}m {secs:.2f}s"
     else:
-        return f"{secs:.4f}s"
+        return f"{secs:.{sub_min_precision}f}s"
 
 
 def visualize(img: torch.Tensor) -> None:

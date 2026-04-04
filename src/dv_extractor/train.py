@@ -71,14 +71,16 @@ def train(
         epoch_loss = total_loss / len(train_loader)
         epoch_dice = total_dice / len(train_loader)
         total_time = time.perf_counter() - start_time
+        remaining_time = total_time / (epoch + 1) * (epochs - epoch - 1)
 
+        log_message = (
+            f"Epoch [{epoch + 1}/{epochs}] - Loss: {epoch_loss:.4f}"
+            f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)}"
+            f" - Remaining: {format_time(remaining_time)}"
+        )
         if epoch_loss < min_loss:
             min_loss = epoch_loss
-            print(
-                f"Epoch [{epoch + 1}/{epochs}] - Loss: {epoch_loss:.4f}"
-                f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)} | NEW BEST"
-            )
-
+            print(log_message + " | NEW BEST")
             if checkpoints_dir:
                 loss_str = f"{epoch_loss:.4f}".replace(".", "p")
 
@@ -94,10 +96,7 @@ def train(
                 filepath = checkpoint_folder / "weights.pt"
                 torch.save(model.state_dict(), filepath)
         else:
-            print(
-                f"Epoch [{epoch + 1}/{epochs}] - Loss: {epoch_loss:.4f}"
-                f" - Dice: {epoch_dice:.4f} - Total Time: {format_time(total_time)}"
-            )
+            print(log_message)
 
 
 def dice_coefficient(
