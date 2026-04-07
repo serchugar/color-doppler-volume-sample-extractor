@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `threshold` parameter in `DynamicUNet` constructor to set the threshold applied to the input images before feeding them to the model. Default is 0.95, which is the threshold used for training the pretrained weights. This threshold is propagated within the `train` function to the creation of `DopplerDataset` instances, so it is applied during training as well. The `predict` method also takes into account this threshold
 - "Computing inference..." print message in `predict` method for when input is a list. So user knows what `tqdm` progress bar is referring to
 - `load_weights` method in `DynamicUNet` class for easily loading model weights from a file. QOL feature.
+- Table Of Contents in `README.md` for easier navigation
 
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)
@@ -26,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - `opencv-contrib-python` dependency
+
+### Fixed
+- Renamed 'Getting Started' section in `README.md` to 'Installation'
 
 ## [0.2.0] - 2026-04-02
 

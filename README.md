@@ -11,7 +11,13 @@ This repository implements a U-Net based pipeline to segment and generate masks 
 > [!NOTE]
 > To see the latest updates and upcoming features, please check the [Change Log](./CHANGELOG.md).
 
-## Quick Start
+## Table of Contents
+- [Installation](#installation)
+- [Training Workflow](#training-workflow)
+- [Inference](#inference)
+- [GPU Acceleration](#gpu-acceleration)
+
+## Installation
 For [uv](https://docs.astral.sh/uv/) users (recommended):
 
 ```bash
