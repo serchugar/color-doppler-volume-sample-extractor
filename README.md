@@ -89,13 +89,13 @@ To run predictions, first train your model or load pretrained weights, then use 
 > The current pretrained weights were trained on images after applying a 95% threshold.  
 > Loading "raw" images directly into the model without this thresholding will result in incorrect segmentations.  
 > The `predict()` method handles this automatically, use it to avoid any issues. 
+> To change the threshold, modify it when creating the model instance, in its constructor.
 
 ```python
 from pathlib import Path
 
 import torch
-from dv_extractor import DEVICE, DynamicUNet, discover_images
-from dv_extractor.utils import visualize
+from dv_extractor import DEVICE, DynamicUNet, discover_images, visualize_predictions
 from torchvision.io import decode_image
 
 # Initialize model with the correct hyperparameters
@@ -104,20 +104,15 @@ model.to(DEVICE)
 
 # Load the weights. Here we use the pretrained ones
 weights_path = Path("weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt")
-state_dict = torch.load(weights_path, map_location=DEVICE, weights_only=True)
+state_dict = torch.load(weights_path, map_location=model.device, weights_only=True)
 model.load_state_dict(state_dict)
 
 # Load the images 
 imgs_path: list[Path] = discover_images(Path("path/to/your/images"))
 
-# Run the inference
+# Run the inference and visualize the results
 masks: list[torch.Tensor] = model.predict(imgs_path)
-
-# Sample image and mask and show on screen
-img: torch.Tensor = decode_image(imgs_path[0])
-mask: torch.Tensor = masks[0]
-visualize(img)
-visualize(mask)
+visualize_predictions(imgs_path, masks, metadata=True)
 ```
 
 ### Pretrained Model Configuration
@@ -155,7 +150,7 @@ from dv_extractor import DEVICE, DynamicUNet
 model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
 model.to(DEVICE)
 
-state_dict = torch.load(Path("path/to/your/weights.pt"), map_location=DEVICE, weights_only=True)
+state_dict = torch.load(Path("path/to/your/weights.pt"), map_location=model.device, weights_only=True)
 ...
 ```
 

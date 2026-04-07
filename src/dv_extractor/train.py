@@ -36,7 +36,7 @@ def train(
     )
 
     images, masks = discover_images_with_mask(labeled_data_dir)
-    dataset = DopplerDataset(images, masks, transform=transform)
+    dataset = DopplerDataset(images, masks, transform=transform, threshold=model.threshold)
 
     seed = torch.initial_seed()
     train_loader = DataLoader(

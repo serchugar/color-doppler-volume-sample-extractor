@@ -7,7 +7,7 @@ authors = [
     { name = "serchugar", email = "162186871+serchugar@users.noreply.github.com" },
 ]
 requires-python = ">=3.14"
-dependencies = ["python-dotenv>=1.2.2", "tqdm>=4.67.3"]
+dependencies = ["fiftyone>=1.14.0", "python-dotenv>=1.2.2", "tqdm>=4.67.3"]
 
 [project.urls]
 Homepage = "https://github.com/serchugar/color-doppler-volume-sample-extractor"

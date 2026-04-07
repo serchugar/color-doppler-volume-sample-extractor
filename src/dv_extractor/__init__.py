@@ -6,8 +6,17 @@ from dv_extractor.constants import DEVICE
 from dv_extractor.dataset import DopplerDataset, discover_images, discover_images_with_mask
 from dv_extractor.model import DynamicUNet
 from dv_extractor.train import train
+from dv_extractor.utils import visualize_predictions
 
 
 __version__ = version("color-doppler-volume-sample-extractor")
 
-__all__ = ["DopplerDataset", "discover_images", "discover_images_with_mask", "DynamicUNet", "train", "DEVICE"]
+__all__ = [
+    "DopplerDataset",
+    "discover_images",
+    "discover_images_with_mask",
+    "DynamicUNet",
+    "train",
+    "DEVICE",
+    "visualize_predictions",
+]

@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `visualize` function in `utils.py` for visualizing single tensor images
 - Estimated remaining time in `train` function epoch logs
 - `sub_min_precision` parameter in `format_time` utility function for higher resolution on short durations
+- `fiftyone` dependency
+- `visualize_predictions` function in `utils.py` for visualizing inference results with the `fiftyone` web app. Allows to visualize thousands of images fast and displays masks as overlays on top of the original images. Metadata can be optionally computed with a bool param in the function signature. If the param 'persist' is set to True, closing the app from the browser will not stop the FiftyOne web app process, it will only finish if the python program itself finishes. This function is exported in `__init__.py`
+- `threshold` parameter in `DynamicUNet` constructor to set the threshold applied to the input images before feeding them to the model. Default is 0.95, which is the threshold used for training the pretrained weights. This threshold is propagated within the `train` function to the creation of `DopplerDataset` instances, so it is applied during training as well. The `predict` method also takes into account this threshold
+- "Computing inference..." print message in `predict` method for when input is a list. So user knows what `tqdm` progress bar is referring to
 
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)

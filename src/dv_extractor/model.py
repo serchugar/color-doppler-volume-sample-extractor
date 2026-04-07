@@ -19,10 +19,12 @@ class DynamicUNet(nn.Module):
         out_channels: int = 1,
         depth: int = 3,
         init_features: int = 32,
+        threshold: float = 0.95,
     ) -> None:
         super().__init__()
 
         self.depth = depth
+        self.threshold = threshold
 
         self.encoders = nn.ModuleList()
         self.pools = nn.ModuleList()
@@ -104,6 +106,7 @@ class DynamicUNet(nn.Module):
             return self._predict_one(img)
 
         elif isinstance(img, list):
+            print("Computing inference...")
             if isinstance(img[0], Path):
                 masks = []
                 for img_path in tqdm(img, bar_format=custom_format, unit=" samples"):
@@ -117,10 +120,8 @@ class DynamicUNet(nn.Module):
             raise ValueError(f"Invalid input type: {type(img)}")
 
     def _predict_one(self, img: torch.Tensor) -> torch.Tensor:
-        threshold = 0.95
-
         img = f.to_dtype(img, torch.float32)
-        img = (f.to_grayscale(img) > 255 * threshold).float()
+        img = (f.to_grayscale(img) > 255 * self.threshold).float()
         img = img.unsqueeze(0)
         img = img.to(self.device)
 
