@@ -132,3 +132,7 @@ class DynamicUNet(nn.Module):
             probs = torch.sigmoid(self.forward(img))
             probs = v2.Resize((h, w), interpolation=v2.InterpolationMode.NEAREST)(probs)
             return ((probs > 0.5).float()).squeeze()  # Remove batch dimension
+
+    def load_weights(self, path: Path) -> None:
+        state_dict = torch.load(path, map_location=self.device, weights_only=True)
+        self.load_state_dict(state_dict)

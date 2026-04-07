@@ -103,9 +103,7 @@ model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
 model.to(DEVICE)
 
 # Load the weights. Here we use the pretrained ones
-weights_path = Path("weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt")
-state_dict = torch.load(weights_path, map_location=model.device, weights_only=True)
-model.load_state_dict(state_dict)
+model.load_weights(Path("weights/pretrained/unet_depth4_feat32_in1_out1_weights.pt"))
 
 # Load the images 
 imgs_path: list[Path] = discover_images(Path("path/to/your/images"))
@@ -113,6 +111,8 @@ imgs_path: list[Path] = discover_images(Path("path/to/your/images"))
 # Run the inference and visualize the results
 masks: list[torch.Tensor] = model.predict(imgs_path)
 visualize_predictions(imgs_path, masks, metadata=True)
+
+# To save the mask results, use torchvision.utils.save_image()
 ```
 
 ### Pretrained Model Configuration
@@ -143,14 +143,13 @@ In your code, don't forget to move your model and weights to the GPU:
 ```python
 from pathlib import Path
 
-import torch
 from dv_extractor import DEVICE, DynamicUNet
 
 
 model = DynamicUNet(in_channels=1, out_channels=1, depth=4, init_features=32)
 model.to(DEVICE)
 
-state_dict = torch.load(Path("path/to/your/weights.pt"), map_location=model.device, weights_only=True)
+model.load_weights(Path("path/to/your/weights.pt"))
 ...
 ```
 
