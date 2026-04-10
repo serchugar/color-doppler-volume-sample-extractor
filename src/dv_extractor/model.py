@@ -17,7 +17,7 @@ class DynamicUNet(nn.Module):
         self,
         in_channels: int = 1,
         out_channels: int = 1,
-        depth: int = 3,
+        depth: int = 4,
         init_features: int = 32,
         threshold: float = 0.95,
     ) -> None:

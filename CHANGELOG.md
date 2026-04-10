@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `predict` method in `DynamicUNet` class. Internally applies threshold. Recommended method for inference.
+- `predict` method in `DynamicUNet` class. Internally applies threshold. Recommended method for inference
 - `tqdm` dependency for progress bars. Used in `predict` method
 - `visualize` function in `utils.py` for visualizing single tensor images
 - Estimated remaining time in `train` function epoch logs
@@ -17,13 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `visualize_predictions` function in `utils.py` for visualizing inference results with the `fiftyone` web app. Allows to visualize thousands of images fast and displays masks as overlays on top of the original images. Metadata can be optionally computed with a bool param in the function signature. If the param 'persist' is set to True, closing the app from the browser will not stop the FiftyOne web app process, it will only finish if the python program itself finishes. This function is exported in `__init__.py`
 - `threshold` parameter in `DynamicUNet` constructor to set the threshold applied to the input images before feeding them to the model. Default is 0.95, which is the threshold used for training the pretrained weights. This threshold is propagated within the `train` function to the creation of `DopplerDataset` instances, so it is applied during training as well. The `predict` method also takes into account this threshold
 - "Computing inference..." print message in `predict` method for when input is a list. So user knows what `tqdm` progress bar is referring to
-- `load_weights` method in `DynamicUNet` class for easily loading model weights from a file. QOL feature.
+- `load_weights` method in `DynamicUNet` class for easily loading model weights from a file. QOL feature
 - Table Of Contents in `README.md` for easier navigation
+- `vermin`dependency dev only. To check the minimum required Python version for the project and increase backwards compatibility
 
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)
 - `train` function now prints every epoch and highlights new best performance with a "NEW BEST" flag
-- `DopplerDataset` `__getitem__` no longer uses OpenCV to load image and apply threshold. Done with pytorch instead.
+- `DopplerDataset` `__getitem__` no longer uses OpenCV to load image and apply threshold. Done with pytorch instead
+- Python version from `3.14` to `3.10` to increase backwards compatibility. Obtained with `vermin` dependency
+- `torch` and `torchvision` dependencies now are move to be default one in `pyproject.toml`. So now instead of two extras `cpu` and `cuda`, the cpu one gets installed by default and for the cuda version is it still required to specify the `cuda` extra
+- `tqdm` version from `4.67.3` to `4.66.5` to fix a dependency conflict. PiPy index had the newer version but the torch index had the older one. Downgraded to the newest version available in the torch index
 
 ### Removed
 - `opencv-contrib-python` dependency

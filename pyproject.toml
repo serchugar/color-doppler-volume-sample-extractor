@@ -6,19 +6,21 @@ readme = "README.md"
 authors = [
     { name = "serchugar", email = "162186871+serchugar@users.noreply.github.com" },
 ]
-requires-python = ">=3.14"
-dependencies = ["fiftyone>=1.14.0", "python-dotenv>=1.2.2", "tqdm>=4.67.3"]
+requires-python = ">=3.10"
+dependencies = [
+    "fiftyone>=1.14.0",
+    "python-dotenv>=1.2.2",
+    "tqdm>=4.66.5",
+    "torch>=2.11.0",
+    "torchvision>=0.26.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/serchugar/color-doppler-volume-sample-extractor"
 Issues = "https://github.com/serchugar/color-doppler-volume-sample-extractor/issues"
 
 [project.optional-dependencies]
-cpu = ["torch>=2.11.0", "torchvision>=0.26.0"]
-cuda = ["torch>=2.11.0", "torchvision>=0.26.0"]
-
-[tool.uv]
-conflicts = [[{ extra = "cpu" }, { extra = "cuda" }]]
+cuda = ["torch", "torchvision"]
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu130", extra = "cuda" }]
@@ -30,11 +32,11 @@ url = "https://download.pytorch.org/whl/cu130"
 explicit = true
 
 [dependency-groups]
-dev = ["ruff>=0.15.7"]
+dev = ["ruff>=0.15.7", "vermin>=1.8.0"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py314"
+target-version = "py310"
 
 [tool.ruff.lint]
 # https://docs.astral.sh/ruff/rules/
