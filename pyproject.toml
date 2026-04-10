@@ -1,6 +1,6 @@
 [project]
 name = "color-doppler-volume-sample-extractor"
-version = "0.2.0"
+version = "0.2.1"
 description = "Volume Sample extractor for Color Doppler ultrasound data using an U-Net neural network architecture."
 readme = "README.md"
 authors = [
