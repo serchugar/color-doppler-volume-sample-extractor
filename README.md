@@ -19,20 +19,63 @@ This repository implements a U-Net based pipeline to segment and generate masks 
 
 ## Installation
 
+### From PyPI
+
+Install it with [uv](https://docs.astral.sh/uv/) or [pip](https://pip.pypa.io/en/stable/installation/):
+```bash
+# With CUDA 13 support (Windows or Linux):
+uv pip install color-doppler-volume-sample-extractor --extra-index-url "https://download.pytorch.org/whl/cu130"
+
+# For CPU (Any OS):
+uv pip install color-doppler-volume-sample-extractor
+```
+
+Once installed, you can import it as:
+```python
+# dv_extractor means Doppler Volume Extractor
+import dv_extractor as dve
+```
+
+> [!NOTE]
+> If using [pip](https://pip.pypa.io/en/stable/installation/) instead of [uv](https://docs.astral.sh/uv/), use `pip install ...` instead.
+
+If you are working with [uv](https://docs.astral.sh/uv/), you can add the package directly from PyPI to your project: 
+```bash 
+# With CUDA 13 support (Windows or Linux):
+uv add color-doppler-volume-sample-extractor --index "https://download.pytorch.org/whl/cu130" 
+
+# For CPU (Any OS):
+uv add color-doppler-volume-sample-extractor
+```
+
+If you are working on a project and [only want to use the pytorch package index for this package](https://docs.astral.sh/uv/concepts/indexes/#pinning-a-package-to-an-index), and PiPy for the rest, set this in your `pyproject.toml`:
+```toml 
+[tool.uv.sources]
+color-doppler-volume-sample-extractor = { index = "pytorch" }
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+```
+Then, remove the whole `[tool.uv.index]` block that looks exactly like this to use the default PyPI index for the rest of your dependencies:
+```toml
+# Delete this exact block
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cu130"
+```
+
 ### From wheel
 Download the wheel from the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest).
 
 Then, install it with [uv](https://docs.astral.sh/uv/) or [pip](https://pip.pypa.io/en/stable/installation/):
 ```bash
 # With CUDA 13 support (Windows or Linux):
-uv pip install "./color_doppler_volume_sample_extractor-0.2.1-py3-none-any.whl[cuda]" --extra-index-url "https://download.pytorch.org/whl/cu130"
+uv pip install "./color_doppler_volume_sample_extractor-0.2.1-py3-none-any.whl" --extra-index-url "https://download.pytorch.org/whl/cu130"
 
 # For CPU (Any OS):
 uv pip install "./color_doppler_volume_sample_extractor-0.2.1-py3-none-any.whl"
 ```
-
-> [!NOTE]
-> If using [pip](https://pip.pypa.io/en/stable/installation/) instead of [uv](https://docs.astral.sh/uv/), use `pip install ...` instead.
 
 ### From Source
 Clone the repository:
