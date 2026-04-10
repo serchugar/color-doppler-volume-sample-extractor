@@ -7,6 +7,7 @@ authors = [
     { name = "serchugar", email = "162186871+serchugar@users.noreply.github.com" },
 ]
 requires-python = ">=3.10"
+license = "MIT"
 dependencies = [
     "fiftyone>=1.14.0",
     "python-dotenv>=1.2.2",
@@ -15,9 +16,70 @@ dependencies = [
     "torchvision>=0.26.0",
 ]
 
+keywords = [
+    "deep-learning",
+    "neural-network",
+    "u-net",
+    "segmentation",
+    "image-segmentation",
+    "semantic-segmentation",
+    "medical-imaging",
+    "ultrasound",
+    "color-doppler",
+    "pytorch",
+    "computer-vision",
+    "machine-learning",
+    "artificial-intelligence",
+    "gpu-acceleration",
+    "cuda",
+    "volumetric",
+    "medical-image-analysis",
+    "color-doppler-ultrasound",
+    "color-doppler-volume",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+
+    "Environment :: GPU :: NVIDIA CUDA :: 13",
+
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Healthcare Industry",
+
+    "License :: OSI Approved :: MIT License",
+
+    "Natural Language :: English",
+
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Education",
+]
+
 [project.urls]
 Homepage = "https://github.com/serchugar/color-doppler-volume-sample-extractor"
 Issues = "https://github.com/serchugar/color-doppler-volume-sample-extractor/issues"
+Repository = "https://github.com/serchugar/color-doppler-volume-sample-extractor"
+Documentation = "https://github.com/serchugar/color-doppler-volume-sample-extractor#readme"
+Changelog = "https://github.com/serchugar/color-doppler-volume-sample-extractor/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 cuda = ["torch", "torchvision"]

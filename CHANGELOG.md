@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `load_weights` method in `DynamicUNet` class for easily loading model weights from a file. QOL feature
 - Table Of Contents in `README.md` for easier navigation
 - `vermin`dependency dev only. To check the minimum required Python version for the project and increase backwards compatibility
+- Keywords and classifiers in `pyproject.toml` for better discoverability on PyPI
 
 ### Changed
 - Discovery functions in `dataset.py` now support custom regex patterns and multiple extensions (previously restricted to hardcoded patterns)
