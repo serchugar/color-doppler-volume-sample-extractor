@@ -18,28 +18,36 @@ This repository implements a U-Net based pipeline to segment and generate masks 
 - [GPU Acceleration](#gpu-acceleration)
 
 ## Installation
-For [uv](https://docs.astral.sh/uv/) users (recommended):
 
+### From wheel
+Download the wheel from the [latest release](https://github.com/serchugar/color-doppler-volume-sample-extractor/releases/latest).
+
+Then, install it with [uv](https://docs.astral.sh/uv/) or [pip](https://pip.pypa.io/en/stable/installation/):
+```bash
+# With CUDA 13 support (Windows or Linux):
+uv pip install "./color_doppler_volume_sample_extractor-0.2.1-py3-none-any.whl[cuda]" --extra-index-url "https://download.pytorch.org/whl/cu130"
+
+# For CPU (Any OS):
+uv pip install "./color_doppler_volume_sample_extractor-0.2.1-py3-none-any.whl"
+```
+
+> [!NOTE]
+> If using [pip](https://pip.pypa.io/en/stable/installation/) instead of [uv](https://docs.astral.sh/uv/), use `pip install ...` instead.
+
+### From Source
+Clone the repository:
 ```bash
 git clone https://github.com/serchugar/color-doppler-volume-sample-extractor
+```
 
+Then, install the package in editable mode with [uv](https://docs.astral.sh/uv/) or [pip](https://pip.pypa.io/en/stable/installation/):
+
+```bash
 # In your uv project, install in editable mode with CUDA support (Nvidia GPU)
 uv pip install -e "/path/to/color-doppler-volume-sample-extractor[cuda]"
 
 # Or install in editable mode with CPU support
-uv pip install -e "/path/to/color-doppler-volume-sample-extractor[cpu]"
-```
-
-Alternatively, if using standard Python and pip:
-
-```bash
-git clone https://github.com/serchugar/color-doppler-volume-sample-extractor
-
-# Install with CUDA support
-pip install -e "/path/to/color-doppler-volume-sample-extractor[cuda]"
-
-# Or install with CPU support
-pip install -e "/path/to/color-doppler-volume-sample-extractor[cpu]"
+uv pip install -e "/path/to/color-doppler-volume-sample-extractor"
 ```
 
 ## Training Workflow
@@ -138,11 +146,7 @@ The following hyperparameters were used to generate the weights available in the
 ## GPU Acceleration
 To enable CUDA support for faster training and inference, ensure you have [CUDA](https://developer.nvidia.com/cuda-downloads) and [CUDNN](https://developer.nvidia.com/cudnn-downloads) installed.  
 
-Then, sync the environment with the `cuda` extra:
-
-```bash
-uv sync --extra cuda
-```
+Then, install the package with CUDA support as described in the [Installation](#installation) section.
 
 In your code, don't forget to move your model and weights to the GPU:
 
